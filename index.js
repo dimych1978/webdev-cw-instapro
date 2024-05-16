@@ -55,12 +55,12 @@ export const goToPage = (newPage, data) => {
       renderApp();
 
       return getPosts({ token: getToken() })
-        .then((newPosts) => {
+        .then(newPosts => {
           page = POSTS_PAGE;
           posts = newPosts;
           renderApp();
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error);
           goToPage(POSTS_PAGE);
         });
@@ -96,7 +96,7 @@ const renderApp = () => {
   if (page === AUTH_PAGE) {
     return renderAuthPageComponent({
       appEl,
-      setUser: (newUser) => {
+      setUser: newUser => {
         user = newUser;
         saveUserToLocalStorage(user);
         goToPage(POSTS_PAGE);
@@ -124,7 +124,7 @@ const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
-    // TODO: реализовать страницу фотографию пользвателя
+    // TODO: реализовать страницу фотографию пользователя
     appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return;
   }

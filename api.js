@@ -11,14 +11,14 @@ export function getPosts({ token }) {
       Authorization: token,
     },
   })
-    .then((response) => {
+    .then(response => {
       if (response.status === 401) {
         throw new Error("Нет авторизации");
       }
 
       return response.json();
     })
-    .then((data) => {
+    .then(data => {
       return data.posts;
     });
 }
@@ -33,7 +33,7 @@ export function registerUser({ login, password, name, imageUrl }) {
       name,
       imageUrl,
     }),
-  }).then((response) => {
+  }).then(response => {
     if (response.status === 400) {
       throw new Error("Такой пользователь уже существует");
     }
@@ -48,7 +48,7 @@ export function loginUser({ login, password }) {
       login,
       password,
     }),
-  }).then((response) => {
+  }).then(response => {
     if (response.status === 400) {
       throw new Error("Неверный логин или пароль");
     }
@@ -64,7 +64,7 @@ export function uploadImage({ file }) {
   return fetch(baseHost + "/api/upload/image", {
     method: "POST",
     body: data,
-  }).then((response) => {
+  }).then(response => {
     return response.json();
   });
 }
