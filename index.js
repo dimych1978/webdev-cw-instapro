@@ -1,6 +1,4 @@
 import { getPosts } from "./api.js";
-import { renderAddPostPageComponent } from "./components/add-post-page-component.js";
-import { renderAuthPageComponent } from "./components/auth-page-component.js";
 import {
   ADD_POSTS_PAGE,
   AUTH_PAGE,
@@ -8,17 +6,20 @@ import {
   POSTS_PAGE,
   USER_POSTS_PAGE,
 } from "./routes.js";
-import { renderPostsPageComponent } from "./components/posts-page-component.js";
-import { renderLoadingPageComponent } from "./components/loading-page-component.js";
 import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
-  saveUserToLocalStorage,
 } from "./helpers.js";
+import { renderApp } from "./render/render.js";
 
 export let user = getUserFromLocalStorage();
+export const handlerUser = newUser => {
+  user = newUser;
+};
+
 export let page = null;
 export let posts = [];
+export let userPosts = [];
 
 const getToken = () => {
   const token = user ? `Bearer ${user.token}` : undefined;
@@ -35,6 +36,7 @@ export const logout = () => {
  * Включает страницу приложения
  */
 export const goToPage = (newPage, data) => {
+  console.log(newPage);
   if (
     [
       POSTS_PAGE,
@@ -54,10 +56,11 @@ export const goToPage = (newPage, data) => {
       page = LOADING_PAGE;
       renderApp();
 
-      return getPosts({ token: getToken() })
+      return getPosts()
         .then(newPosts => {
           page = POSTS_PAGE;
           posts = newPosts;
+          console.log(posts);
           renderApp();
         })
         .catch(error => {
@@ -67,10 +70,8 @@ export const goToPage = (newPage, data) => {
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      // TODO: реализовать получение постов юзера из API
-      console.log("Открываю страницу пользователя: ", data.userId);
       page = USER_POSTS_PAGE;
-      posts = [];
+      posts = posts.filter(post => post.user.id === data.userId);
       return renderApp();
     }
 
@@ -81,53 +82,6 @@ export const goToPage = (newPage, data) => {
   }
 
   throw new Error("страницы не существует");
-};
-
-const renderApp = () => {
-  const appEl = document.getElementById("app");
-  if (page === LOADING_PAGE) {
-    return renderLoadingPageComponent({
-      appEl,
-      user,
-      goToPage,
-    });
-  }
-
-  if (page === AUTH_PAGE) {
-    return renderAuthPageComponent({
-      appEl,
-      setUser: newUser => {
-        user = newUser;
-        saveUserToLocalStorage(user);
-        goToPage(POSTS_PAGE);
-      },
-      user,
-      goToPage,
-    });
-  }
-
-  if (page === ADD_POSTS_PAGE) {
-    return renderAddPostPageComponent({
-      appEl,
-      onAddPostClick({ description, imageUrl }) {
-        // TODO: реализовать добавление поста в API
-        console.log("Добавляю пост...", { description, imageUrl });
-        goToPage(POSTS_PAGE);
-      },
-    });
-  }
-
-  if (page === POSTS_PAGE) {
-    return renderPostsPageComponent({
-      appEl,
-    });
-  }
-
-  if (page === USER_POSTS_PAGE) {
-    // TODO: реализовать страницу фотографию пользователя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
-    return;
-  }
 };
 
 goToPage(POSTS_PAGE);

@@ -176,9 +176,19 @@
   text-align: center;
 }
 
-.file-upload-image-conrainer {
+.file-upload-image-container {
   display: flex;
   align-items: center;
+}
+
+.file-upload-remove-button {
+  padding: 10px 13px 13px;
+  font-size: 18px;
+  line-height: 22px;
+  border-radius: 5px;
+  background-color: #565eef;
+  color: #ffffff;
+  border: none;
 }
 
 .file-upload-image {
