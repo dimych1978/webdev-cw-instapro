@@ -1,4 +1,4 @@
-import { getPosts } from "./api.js";
+import { getPosts, getUserPosts } from "./api.js";
 import {
   ADD_POSTS_PAGE,
   AUTH_PAGE,
@@ -32,11 +32,7 @@ export const logout = () => {
   goToPage(POSTS_PAGE);
 };
 
-/**
- * Включает страницу приложения
- */
 export const goToPage = (newPage, data) => {
-  console.log(newPage);
   if (
     [
       POSTS_PAGE,
@@ -47,7 +43,6 @@ export const goToPage = (newPage, data) => {
     ].includes(newPage)
   ) {
     if (newPage === ADD_POSTS_PAGE) {
-      // Если пользователь не авторизован, то отправляем его на авторизацию перед добавлением поста
       page = user ? ADD_POSTS_PAGE : AUTH_PAGE;
       return renderApp();
     }
@@ -56,11 +51,10 @@ export const goToPage = (newPage, data) => {
       page = LOADING_PAGE;
       renderApp();
 
-      return getPosts()
+      return getPosts({ token: getToken() })
         .then(newPosts => {
           page = POSTS_PAGE;
           posts = newPosts;
-          console.log(posts);
           renderApp();
         })
         .catch(error => {
@@ -70,9 +64,11 @@ export const goToPage = (newPage, data) => {
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      page = USER_POSTS_PAGE;
-      posts = posts.filter(post => post.user.id === data.userId);
-      return renderApp();
+      return getUserPosts({ token: getToken() }, data.userId).then(newPosts => {
+        page = USER_POSTS_PAGE;
+        posts = newPosts;
+        renderApp();
+      });
     }
 
     page = newPage;

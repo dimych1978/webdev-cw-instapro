@@ -1,10 +1,12 @@
 import { uploadImage, onAddPostClick } from "../api.js";
 import { goToPage } from "../index.js";
 import { POSTS_PAGE } from "../routes.js";
-
+import { sanitize } from "../sanitize.js";
+import { renderUploadImageComponent } from "./upload-image-component.js";
 export function renderAddPostPageComponent({ appEl }) {
+  let imageUrl = "";
+
   const render = () => {
-    // TODO: Реализовать страницу добавления поста
     const appHtml = `
       <div class="form">
         <h3 class="form-title">Добавить пост</h3>
@@ -24,45 +26,35 @@ export function renderAddPostPageComponent({ appEl }) {
       </div>`;
     appEl.innerHTML = appHtml;
 
-    const inputFile = document.querySelector(".file-upload-input");
-    inputFile.style.opacity = 0;
-
     const textDescription = document.querySelector(".textarea");
+    const userFields = appEl.querySelector(".form-inputs").children;
 
-    document.getElementById("add-button").addEventListener("click", () => {
-      uploadImage({ file: inputFile.files[0] })
-        .then(data =>
-          onAddPostClick({
-            description: textDescription.value,
-            imageUrl: data.fileUrl,
-          })
-        )
-        .then(() => goToPage(POSTS_PAGE));
+    Array.from(userFields).forEach(el => {
+      el.addEventListener("click", () => {
+        el.setAttribute("style", "border: none");
+      });
     });
 
-    inputFile.addEventListener("change", () => {
-      const uploadContainer = document.querySelector(".upload-image-container");
+    renderUploadImageComponent({
+      element: appEl.querySelector(".upload-image-container"),
+      onImageUrlChange(newImageUrl) {
+        imageUrl = newImageUrl;
+      },
+    });
 
-      const fileUploadImageContainer = document.createElement("div");
-      fileUploadImageContainer.className = "file-upload-image-container";
-
-      const image = document.createElement("img");
-      image.className = "file-upload-image";
-      image.file = inputFile.files[0];
-      image.src = URL.createObjectURL(inputFile.files[0]);
-
-      const buttonRemoveUpload = document.createElement("button");
-      buttonRemoveUpload.className = "file-upload-remove-button";
-      buttonRemoveUpload.textContent = "Заменить фото";
-
-      // uploadContainer.removeChild(document.querySelector(".upload-image"));
-      uploadContainer.appendChild(fileUploadImageContainer);
-      fileUploadImageContainer.appendChild(image);
-      fileUploadImageContainer.appendChild(buttonRemoveUpload);
-
-      buttonRemoveUpload.addEventListener("click", () => {
-        render();
-      });
+    document.getElementById("add-button").addEventListener("click", () => {
+      if (!textDescription.value.match(/\S/) || !imageUrl) {
+        textDescription.textContent = textDescription.value;
+        [userFields[0], userFields[1]].forEach(el => {
+          el.setAttribute("style", "border: 3px solid red");
+        });
+        alert("Заполните обязательные поля");
+        return;
+      }
+      onAddPostClick({
+        description: sanitize(textDescription.value),
+        imageUrl: imageUrl,
+      }).then(() => goToPage(POSTS_PAGE));
     });
   };
 

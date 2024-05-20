@@ -16,7 +16,6 @@ import { renderUserPageComponent } from "../components/user-page-component.js";
 
 export const renderApp = () => {
   const appEl = document.getElementById("app");
-  console.log(page);
   if (page === LOADING_PAGE) {
     return renderLoadingPageComponent({
       appEl,
@@ -41,9 +40,7 @@ export const renderApp = () => {
   if (page === ADD_POSTS_PAGE) {
     return renderAddPostPageComponent({
       appEl,
-      onAddPostClick({ description, imageUrl }) {
-        // TODO: реализовать добавление поста в API
-        console.log("Добавляю пост...", { description, imageUrl });
+      onAddPostClick() {
         goToPage(POSTS_PAGE);
       },
     });
@@ -54,8 +51,6 @@ export const renderApp = () => {
   }
 
   if (page === USER_POSTS_PAGE) {
-    // TODO: реализовать страницу фотографию пользователя
-    appEl.innerHTML = "Здесь будет страница фотографий пользователя";
     return renderUserPageComponent({ appEl });
   }
 };

@@ -1,4 +1,5 @@
 import { loginUser, registerUser } from "../api.js";
+import { sanitize } from "../sanitize.js";
 import { renderHeaderComponent } from "./header-component.js";
 import { renderUploadImageComponent } from "./upload-image-component.js";
 
@@ -54,8 +55,14 @@ export function renderAuthPageComponent({ appEl, setUser }) {
 
     appEl.innerHTML = appHtml;
 
-    // Не вызываем перерендер, чтобы не сбрасывалась заполненная форма
-    // Точечно обновляем кусочек дом дерева
+    const userFields = appEl.querySelector(".form-inputs").children;
+
+    Array.from(userFields).forEach(el => {
+      el.addEventListener("click", () => {
+        el.setAttribute("style", "border: none");
+      });
+    });
+
     const setError = message => {
       appEl.querySelector(".form-error").textContent = message;
     };
@@ -79,21 +86,22 @@ export function renderAuthPageComponent({ appEl, setUser }) {
       setError("");
 
       if (isLoginMode) {
-        const login = document.getElementById("login-input").value;
-        const password = document.getElementById("password-input").value;
+        const login = appEl.querySelector("#login-input").value;
+        const password = appEl.querySelector("#password-input").value;
 
-        if (!login) {
-          alert("Введите логин");
-          return;
-        }
-
-        if (!password) {
-          alert("Введите пароль");
+        if (
+          !userFields[0].value.match(/\S/) ||
+          !userFields[1].value.match(/\S/)
+        ) {
+          [userFields[0], userFields[1]].forEach(el => {
+            el.setAttribute("style", "border: 3px solid red");
+          });
+          alert("Заполните обязательные поля");
           return;
         }
 
         loginUser({
-          login: login,
+          login: sanitize(login),
           password: password,
         })
           .then(user => {
@@ -104,32 +112,29 @@ export function renderAuthPageComponent({ appEl, setUser }) {
             setError(error.message);
           });
       } else {
+        if (
+          !userFields[1].value.match(/\S/) ||
+          !userFields[2].value.match(/\S/) ||
+          !userFields[3].value.match(/\S/) ||
+          !imageUrl
+        ) {
+          [userFields[0], userFields[1], userFields[2], userFields[3]].forEach(
+            el => {
+              el.setAttribute("style", "border: 3px solid red");
+            }
+          );
+          alert("Заполните обязательные поля");
+          return;
+        }
+
         const login = document.getElementById("login-input").value;
         const name = document.getElementById("name-input").value;
         const password = document.getElementById("password-input").value;
-        if (!name) {
-          alert("Введите имя");
-          return;
-        }
-        if (!login) {
-          alert("Введите логин");
-          return;
-        }
-
-        if (!password) {
-          alert("Введите пароль");
-          return;
-        }
-
-        if (!imageUrl) {
-          alert("Не выбрана фотография");
-          return;
-        }
 
         registerUser({
-          login: login,
+          login: sanitize(login),
           password: password,
-          name: name,
+          name: sanitize(name),
           imageUrl,
         })
           .then(user => {
