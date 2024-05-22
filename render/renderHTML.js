@@ -1,11 +1,11 @@
-import { posts } from "../index.js";
+import { posts } from '../index.js';
 
 export const renderHTML = () => {
   `
 <div class="page-container">
   <div class="header-container"></div> 
     <ul class="posts">${posts
-      .map(post => {
+      .map((post) => {
         return `
 <li class="post">
   <div class="post-header" data-user-id=${post.user.id}>
@@ -26,8 +26,8 @@ export const renderHTML = () => {
     <p class="post-likes-text">Нравится: <strong>${
       post.likes.length && post.likes[0].name
     } ${
-          post.likes.length > 1 ? `и ещё ${post.likes.length - 1}` : ""
-        }</strong></p>
+      post.likes.length > 1 ? `и ещё ${post.likes.length - 1}` : ''
+    }</strong></p>
   </div>
   <p class="post-text">
     <span class="user-name">${post.user.name}</span>&emsp;${post.description}
@@ -35,7 +35,7 @@ export const renderHTML = () => {
   <p class="post-date">${post.createdAt}</p>
 </li>`;
       })
-      .join("")}
+      .join('')}
     </ul>
 </div>`;
 };

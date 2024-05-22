@@ -1,15 +1,15 @@
-import { USER_POSTS_PAGE } from "../routes.js";
-import { renderHeaderComponent } from "./header-component.js";
-import { posts, goToPage, user } from "../index.js";
-import { likeHandler } from "./like-component.js";
-import { formatDistanceToNow } from "date-fns";
-import { ru } from "date-fns/locale";
+import { USER_POSTS_PAGE } from '../routes.js';
+import { renderHeaderComponent } from './header-component.js';
+import { posts, goToPage } from '../index.js';
+import { likeHandler } from './like-component.js';
+import { formatDistanceToNow } from 'date-fns';
+import { ru } from 'date-fns/locale';
 export function renderPostsPageComponent({ appEl }) {
   const appHtml = `
     <div class="page-container">
       <div class="header-container"></div> 
         <ul class="posts">${posts
-          .map(post => {
+          .map((post) => {
             return `
     <li class="post">
       <div class="post-header" data-user-id=${post.user.id}>
@@ -30,13 +30,13 @@ export function renderPostsPageComponent({ appEl }) {
         <p class="post-likes-text">Нравится: <strong>${
           post.likes.length && post.likes[0].name
         } ${
-              post.likes.length > 1 ? `и ещё ${post.likes.length - 1}` : ""
-            }</strong></p>
+          post.likes.length > 1 ? `и ещё ${post.likes.length - 1}` : ''
+        }</strong></p>
       </div>
       <p class="post-text">
         <span class="user-name">${post.user.name}</span>&emsp;${
-              post.description
-            }
+          post.description
+        }
       </p>
       <p class="post-date">${formatDistanceToNow(new Date(post.createdAt), {
         addSuffix: true,
@@ -44,28 +44,28 @@ export function renderPostsPageComponent({ appEl }) {
       })}</p>
     </li>`;
           })
-          .join("")}
+          .join('')}
         </ul>
     </div>`;
   appEl.innerHTML = appHtml;
 
   renderHeaderComponent({
-    element: document.querySelector(".header-container"),
+    element: document.querySelector('.header-container'),
   });
 
-  for (let userEl of document.querySelectorAll(".post-header")) {
-    userEl.addEventListener("click", () => {
+  for (let userEl of document.querySelectorAll('.post-header')) {
+    userEl.addEventListener('click', () => {
       goToPage(USER_POSTS_PAGE, {
         userId: userEl.dataset.userId,
       });
     });
   }
 
-  for (let userEl of document.querySelectorAll(".like-button")) {
-    userEl.addEventListener("click", () => {
-      likeHandler(userEl).then(data => {
+  for (let userEl of document.querySelectorAll('.like-button')) {
+    userEl.addEventListener('click', () => {
+      likeHandler(userEl).then((data) => {
         const index = posts.indexOf(
-          posts.find(post => post.id === data.post.id)
+          posts.find((post) => post.id === data.post.id),
         );
         posts[index].isLiked = !posts[index].isLiked;
         renderPostsPageComponent({ appEl });

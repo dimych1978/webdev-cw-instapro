@@ -1,19 +1,19 @@
-import { getPosts, getUserPosts } from "./api.js";
+import { getPosts, getUserPosts } from './api.js';
 import {
   ADD_POSTS_PAGE,
   AUTH_PAGE,
   LOADING_PAGE,
   POSTS_PAGE,
   USER_POSTS_PAGE,
-} from "./routes.js";
+} from './routes.js';
 import {
   getUserFromLocalStorage,
   removeUserFromLocalStorage,
-} from "./helpers.js";
-import { renderApp } from "./render/render.js";
+} from './helpers.js';
+import { renderApp } from './render/render.js';
 
 export let user = getUserFromLocalStorage();
-export const handlerUser = newUser => {
+export const handlerUser = (newUser) => {
   user = newUser;
 };
 
@@ -52,23 +52,25 @@ export const goToPage = (newPage, data) => {
       renderApp();
 
       return getPosts({ token: getToken() })
-        .then(newPosts => {
+        .then((newPosts) => {
           page = POSTS_PAGE;
           posts = newPosts;
           renderApp();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           goToPage(POSTS_PAGE);
         });
     }
 
     if (newPage === USER_POSTS_PAGE) {
-      return getUserPosts({ token: getToken() }, data.userId).then(newPosts => {
-        page = USER_POSTS_PAGE;
-        posts = newPosts;
-        renderApp();
-      });
+      return getUserPosts({ token: getToken() }, data.userId).then(
+        (newPosts) => {
+          page = USER_POSTS_PAGE;
+          posts = newPosts;
+          renderApp();
+        },
+      );
     }
 
     page = newPage;
@@ -77,7 +79,7 @@ export const goToPage = (newPage, data) => {
     return;
   }
 
-  throw new Error("страницы не существует");
+  throw new Error('страницы не существует');
 };
 
 goToPage(POSTS_PAGE);

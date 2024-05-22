@@ -1,10 +1,10 @@
-import { uploadImage, onAddPostClick } from "../api.js";
-import { goToPage } from "../index.js";
-import { POSTS_PAGE } from "../routes.js";
-import { sanitize } from "../sanitize.js";
-import { renderUploadImageComponent } from "./upload-image-component.js";
+import { onAddPostClick } from '../api.js';
+import { goToPage } from '../index.js';
+import { POSTS_PAGE } from '../routes.js';
+import { sanitize } from '../sanitize.js';
+import { renderUploadImageComponent } from './upload-image-component.js';
 export function renderAddPostPageComponent({ appEl }) {
-  let imageUrl = "";
+  let imageUrl = '';
 
   const render = () => {
     const appHtml = `
@@ -26,34 +26,34 @@ export function renderAddPostPageComponent({ appEl }) {
       </div>`;
     appEl.innerHTML = appHtml;
 
-    const textDescription = document.querySelector(".textarea");
-    const userFields = appEl.querySelector(".form-inputs").children;
+    const textDescription = document.querySelector('.textarea');
+    const userFields = appEl.querySelector('.form-inputs').children;
 
-    Array.from(userFields).forEach(el => {
-      el.addEventListener("change", () => {
-        el.setAttribute("required", "none");
-        el.setAttribute("style", "border: none");
+    Array.from(userFields).forEach((el) => {
+      el.addEventListener('change', () => {
+        el.setAttribute('required', 'none');
+        el.setAttribute('style', 'border: none');
       });
     });
 
     renderUploadImageComponent({
-      element: appEl.querySelector(".upload-image-container"),
+      element: appEl.querySelector('.upload-image-container'),
       onImageUrlChange(newImageUrl) {
         imageUrl = newImageUrl;
       },
     });
 
-    document.getElementById("add-button").addEventListener("click", () => {
+    document.getElementById('add-button').addEventListener('click', () => {
       if (!textDescription.value.match(/\S/)) {
         textDescription.textContent = textDescription.value;
-        textDescription.setAttribute("required", "required");
-        alert("Заполните обязательные поля");
+        textDescription.setAttribute('required', 'required');
+        alert('Заполните обязательные поля');
         return;
       }
 
       if (!imageUrl) {
-        userFields[0].setAttribute("style", "border: 3px solid red");
-        alert("Добавьте фотографию");
+        userFields[0].setAttribute('style', 'border: 3px solid red');
+        alert('Добавьте фотографию');
         return;
       }
 
