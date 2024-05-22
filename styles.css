@@ -184,6 +184,10 @@
   gap: 10px;
 }
 
+.input:required:invalid {
+  border: 3px solid red;
+}
+
 .form-error {
   color: red;
 }

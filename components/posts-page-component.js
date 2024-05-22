@@ -42,7 +42,7 @@ export function renderPostsPageComponent({ appEl }) {
         addSuffix: true,
         locale: ru,
       })}</p>
-</li>`;
+    </li>`;
           })
           .join("")}
         </ul>

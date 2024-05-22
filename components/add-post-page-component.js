@@ -30,7 +30,8 @@ export function renderAddPostPageComponent({ appEl }) {
     const userFields = appEl.querySelector(".form-inputs").children;
 
     Array.from(userFields).forEach(el => {
-      el.addEventListener("click", () => {
+      el.addEventListener("change", () => {
+        el.setAttribute("required", "none");
         el.setAttribute("style", "border: none");
       });
     });
@@ -43,14 +44,19 @@ export function renderAddPostPageComponent({ appEl }) {
     });
 
     document.getElementById("add-button").addEventListener("click", () => {
-      if (!textDescription.value.match(/\S/) || !imageUrl) {
+      if (!textDescription.value.match(/\S/)) {
         textDescription.textContent = textDescription.value;
-        [userFields[0], userFields[1]].forEach(el => {
-          el.setAttribute("style", "border: 3px solid red");
-        });
+        textDescription.setAttribute("required", "required");
         alert("Заполните обязательные поля");
         return;
       }
+
+      if (!imageUrl) {
+        userFields[0].setAttribute("style", "border: 3px solid red");
+        alert("Добавьте фотографию");
+        return;
+      }
+
       onAddPostClick({
         description: sanitize(textDescription.value),
         imageUrl: imageUrl,

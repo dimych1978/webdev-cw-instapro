@@ -69,7 +69,6 @@ export function loginUser({ login, password }) {
 export function uploadImage({ file }) {
   const data = new FormData();
   data.append("file", file);
-  console.log(data, file);
 
   return fetch(baseHost + "/api/upload/image", {
     method: "POST",

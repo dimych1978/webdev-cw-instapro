@@ -58,7 +58,8 @@ export function renderAuthPageComponent({ appEl, setUser }) {
     const userFields = appEl.querySelector(".form-inputs").children;
 
     Array.from(userFields).forEach(el => {
-      el.addEventListener("click", () => {
+      el.addEventListener("change", () => {
+        el.setAttribute("required", "none");
         el.setAttribute("style", "border: none");
       });
     });
@@ -89,12 +90,9 @@ export function renderAuthPageComponent({ appEl, setUser }) {
         const login = appEl.querySelector("#login-input").value;
         const password = appEl.querySelector("#password-input").value;
 
-        if (
-          !userFields[0].value.match(/\S/) ||
-          !userFields[1].value.match(/\S/)
-        ) {
-          [userFields[0], userFields[1]].forEach(el => {
-            el.setAttribute("style", "border: 3px solid red");
+        if (!login.match(/\S/) || !password.match(/\S/)) {
+          Array.from(userFields).forEach(el => {
+            el.setAttribute("required", "required");
           });
           alert("Заполните обязательные поля");
           return;
@@ -112,24 +110,21 @@ export function renderAuthPageComponent({ appEl, setUser }) {
             setError(error.message);
           });
       } else {
-        if (
-          !userFields[1].value.match(/\S/) ||
-          !userFields[2].value.match(/\S/) ||
-          !userFields[3].value.match(/\S/) ||
-          !imageUrl
-        ) {
-          [userFields[0], userFields[1], userFields[2], userFields[3]].forEach(
-            el => {
-              el.setAttribute("style", "border: 3px solid red");
-            }
-          );
-          alert("Заполните обязательные поля");
-          return;
-        }
-
         const login = document.getElementById("login-input").value;
         const name = document.getElementById("name-input").value;
         const password = document.getElementById("password-input").value;
+        if (!login.match(/\S/) || !password.match(/\S/) || !name.match(/\S/)) {
+          Array.from(userFields).forEach(el => {
+            el.setAttribute("required", "required");
+          });
+          alert("Заполните обязательные поля");
+          return;
+        }
+        if (!imageUrl) {
+          userFields[0].setAttribute("style", "border: 3px solid red");
+          alert("Добавьте фотографию");
+          return;
+        }
 
         registerUser({
           login: sanitize(login),

@@ -32,7 +32,6 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
     const fileInputElement = element.querySelector(".file-upload-input");
 
     fileInputElement?.addEventListener("change", () => {
-      console.log("object");
       const file = fileInputElement.files[0];
       if (file) {
         const labelEl = document.querySelector(".file-upload-label");
