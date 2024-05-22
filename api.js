@@ -79,41 +79,60 @@ export function uploadImage({ file }) {
 }
 
 export async function onAddPostClick({ description, imageUrl }) {
-  const response = await fetch(postsHost, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${user.token}`,
-    },
-    body: JSON.stringify({ description, imageUrl }),
-  });
-  return response.json();
+  try {
+    const response = await fetch(postsHost, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+      body: JSON.stringify({ description, imageUrl }),
+    });
+    if (response.status === 400)
+      throw new Error("Добавьте фото и(или) описание к нему");
+    return response.json();
+  } catch (error) {
+    alert(error.message);
+  }
 }
 
 export const likeOff = async id => {
   if (!user) return;
-  const response = await fetch(`${postsHost}/${id}/dislike`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${user.token}`,
-    },
-  });
-  const data = await response.json();
-  console.log(data);
-  return data;
+  try {
+    const response = await fetch(`${postsHost}/${id}/dislike`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    if (response.status === 401)
+      throw new Error("Нет авторизации. Войдите под своим аккаунтом");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    alert(error.message);
+  }
 };
 
 export const likeOn = async id => {
-  console.log(user);
   if (!user) return;
-  const response = await fetch(`${postsHost}/${id}/like`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${user.token}`,
-    },
-  });
-  const data = await response.json();
-  console.log(data);
-  return data;
+  try {
+    const response = await fetch(`${postsHost}/${id}/like`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    });
+
+    if (response.status === 401)
+      throw new Error("Нет авторизации. Войдите под своим аккаунтом");
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    alert(error.message);
+  }
 };
 
 export const onDeletePostClick = async () => {};
