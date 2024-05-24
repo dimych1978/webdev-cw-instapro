@@ -4,7 +4,9 @@ import { posts, goToPage } from '../index.js';
 import { likeHandler } from './like-component.js';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
-export function renderPostsPageComponent({ appEl }) {
+import { renderApp } from '../render/render.js';
+import { sanitize } from '../sanitize.js';
+export function renderPostsPageComponent({ appEl }, newLike) {
   const appHtml = `
     <div class="page-container">
       <div class="header-container"></div> 
@@ -14,7 +16,7 @@ export function renderPostsPageComponent({ appEl }) {
     <li class="post">
       <div class="post-header" data-user-id=${post.user.id}>
         <img src=${post.user.imageUrl} class="post-header__user-image">
-        <p class="post-header__user-name">${post.user.name}</p>
+        <p class="post-header__user-name">${sanitize(post.user.name)}</p>
       </div>
       <div class="post-image-container">
         <img class="post-image" src=${post.imageUrl}>
@@ -22,21 +24,36 @@ export function renderPostsPageComponent({ appEl }) {
       <div class="post-likes">
         <button data-post-id=${post.id} class="like-button">
         <img ${
-          post.isLiked
-            ? 'src = "./assets/images/like-active.svg"'
-            : 'src = "./assets/images/like-not-active.svg"'
+          newLike?.post.id === post.id
+            ? newLike.post.isLiked
+              ? 'src = "./assets/images/like-active.svg"'
+              : 'src = "./assets/images/like-not-active.svg"'
+            : post.isLiked
+              ? 'src = "./assets/images/like-active.svg"'
+              : 'src = "./assets/images/like-not-active.svg"'
         }>
         </button>
-        <p class="post-likes-text">Нравится: <strong>${
-          post.likes.length && post.likes[0].name
-        } ${
-          post.likes.length > 1 ? `и ещё ${post.likes.length - 1}` : ''
-        }</strong></p>
-      </div>
-      <p class="post-text">
-        <span class="user-name">${post.user.name}</span>&emsp;${
-          post.description
+        <p class="post-likes-text">Нравится: <strong>
+        ${
+          newLike?.post.id === post.id
+            ? `${newLike.post.likes.length && sanitize(newLike.post.likes[0].name)} 
+              ${
+                newLike.post.likes.length > 1
+                  ? `и ещё ${newLike.post.likes.length - 1}`
+                  : ''
+              }`
+            : `${post.likes.length && sanitize(post.likes[0].name)} ${
+                post.likes.length > 1 ? `и ещё ${post.likes.length - 1}` : ''
+              }`
         }
+           </strong>
+        </p>
+      </div>
+      <span class='form-error'></span>
+      <p class="post-text">
+        <span class="user-name">${sanitize(post.user.name)}</span>&emsp;${sanitize(
+          post.description,
+        )}
       </p>
       <p class="post-date">${formatDistanceToNow(new Date(post.createdAt), {
         addSuffix: true,
@@ -48,6 +65,13 @@ export function renderPostsPageComponent({ appEl }) {
         </ul>
     </div>`;
   appEl.innerHTML = appHtml;
+
+  const setError = (message, element) => {
+    element.closest('.post').querySelector('.form-error').textContent = message;
+    setTimeout(() => {
+      element.closest('.post').querySelector('.form-error').textContent = '';
+    }, 5000);
+  };
 
   renderHeaderComponent({
     element: document.querySelector('.header-container'),
@@ -63,13 +87,17 @@ export function renderPostsPageComponent({ appEl }) {
 
   for (let userEl of document.querySelectorAll('.like-button')) {
     userEl.addEventListener('click', () => {
-      likeHandler(userEl).then((data) => {
-        const index = posts.indexOf(
-          posts.find((post) => post.id === data.post.id),
-        );
-        posts[index].isLiked = !posts[index].isLiked;
-        renderPostsPageComponent({ appEl });
-      });
+      setError('', userEl);
+      likeHandler(userEl)
+        .then((data) => {
+          if (data.message?.includes('Нет авторизации'))
+            throw new Error(data.message);
+          renderApp(data);
+        })
+        .catch((error) => {
+          userEl.className = 'like-button';
+          setError(error.message, userEl);
+        });
     });
   }
 }

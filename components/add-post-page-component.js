@@ -2,12 +2,14 @@ import { onAddPostClick } from '../api.js';
 import { goToPage } from '../index.js';
 import { POSTS_PAGE } from '../routes.js';
 import { sanitize } from '../sanitize.js';
+import { renderHeaderComponent } from './header-component.js';
 import { renderUploadImageComponent } from './upload-image-component.js';
 export function renderAddPostPageComponent({ appEl }) {
   let imageUrl = '';
 
   const render = () => {
     const appHtml = `
+    <div class="header-container"></div>
       <div class="form">
         <h3 class="form-title">Добавить пост</h3>
         <div class="form-inputs">
@@ -23,11 +25,16 @@ export function renderAddPostPageComponent({ appEl }) {
           </label>
           <button class="button" id="add-button">Добавить</button>
         </div>
-      </div>`;
+      </div>
+    `;
     appEl.innerHTML = appHtml;
 
     const textDescription = document.querySelector('.textarea');
     const userFields = appEl.querySelector('.form-inputs').children;
+
+    renderHeaderComponent({
+      element: appEl.querySelector('.header-container'),
+    });
 
     Array.from(userFields).forEach((el) => {
       el.addEventListener('change', () => {

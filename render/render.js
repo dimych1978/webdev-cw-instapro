@@ -13,7 +13,7 @@ import { page, user, goToPage, handlerUser } from '../index.js';
 import { renderAddPostPageComponent } from '../components/add-post-page-component.js';
 import { renderUserPageComponent } from '../components/user-page-component.js';
 
-export const renderApp = () => {
+export const renderApp = (newLike) => {
   const appEl = document.getElementById('app');
   if (page === LOADING_PAGE) {
     return renderLoadingPageComponent({
@@ -46,10 +46,10 @@ export const renderApp = () => {
   }
 
   if (page === POSTS_PAGE) {
-    return renderPostsPageComponent({ appEl });
+    return renderPostsPageComponent({ appEl }, newLike);
   }
 
   if (page === USER_POSTS_PAGE) {
-    return renderUserPageComponent({ appEl });
+    return renderUserPageComponent({ appEl }, newLike);
   }
 };

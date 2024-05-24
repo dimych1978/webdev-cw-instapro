@@ -97,7 +97,7 @@ export function renderAuthPageComponent({ appEl, setUser }) {
           alert('Заполните обязательные поля');
           return;
         }
-
+        console.log(login);
         loginUser({
           login: sanitize(login),
           password: password,

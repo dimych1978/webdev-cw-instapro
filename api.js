@@ -116,22 +116,20 @@ export const likeOff = async (id) => {
 };
 
 export const likeOn = async (id) => {
-  if (!user) return;
   try {
     const response = await fetch(`${postsHost}/${id}/like`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `${user && `Bearer ${user.token}`}`,
       },
     });
-
     if (response.status === 401)
       throw new Error('Нет авторизации. Войдите под своим аккаунтом');
 
     const data = await response.json();
     return data;
   } catch (error) {
-    alert(error.message);
+    return error;
   }
 };
 

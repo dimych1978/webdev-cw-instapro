@@ -8,18 +8,19 @@
     "lint": "npm run lint:js && npm run lint:css",
     "prepare": "husky"
   },
-  "dependencies": {
-    "date-fns": "^3.6.0",
-    "husky": "^9.0.11",
-    "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4"
-  },
   "name": "webdev-cw-instapro",
   "description": "MVP аналога популярной соц. сети для обмена фотографиями",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Dmitrii Bashkatov",
   "license": "ISC",
+  "dependencies": {
+    "date-fns": "^3.6.0",
+    "globals": "^15.3.0",
+    "husky": "^9.0.11",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
   "devDependencies": {
     "@eslint/js": "^9.3.0",
     "eslint": "^9.3.0",
