@@ -70,6 +70,7 @@
   flex-direction: row;
   align-items: center;
   margin-bottom: 10px;
+  justify-content: space-between;
   cursor: pointer;
 }
 
@@ -79,6 +80,27 @@
   object-fit: cover;
   border-radius: 40px;
   margin-right: 10px;
+}
+
+.del {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border: none;
+  margin-right: 10px;
+  background-image: url('assets/images/delete.svg');
+}
+
+.del:not([disabled]):hover {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border: none;
+  margin-right: 10px;
+  background-color: #bf18482e;
+  background-image: url('assets/images/delete.svg');
+  transition: 1s;
+  cursor: pointer;
 }
 
 .post-image-container {

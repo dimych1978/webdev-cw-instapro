@@ -133,4 +133,20 @@ export const likeOn = async (id) => {
   }
 };
 
-export const onDeletePostClick = async () => {};
+export const onDeletePostClick = async (id) => {
+  try {
+    const response = await fetch(`${postsHost}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `${user && `Bearer ${user.token}`}`,
+      },
+    });
+    if (response.status === 401)
+      throw new Error('Нет авторизации. Войдите под своим аккаунтом');
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return error;
+  }
+};

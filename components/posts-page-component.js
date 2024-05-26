@@ -1,11 +1,12 @@
-import { USER_POSTS_PAGE } from '../routes.js';
+import { POSTS_PAGE, USER_POSTS_PAGE } from '../routes.js';
 import { renderHeaderComponent } from './header-component.js';
-import { posts, goToPage } from '../index.js';
+import { posts, goToPage, user } from '../index.js';
 import { likeHandler } from './like-component.js';
 import { formatDistanceToNow } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import { renderApp } from '../render/render.js';
 import { sanitize } from '../sanitize.js';
+import { onDeletePostClick } from '../api.js';
 export function renderPostsPageComponent({ appEl }, newLike) {
   const appHtml = `
     <div class="page-container">
@@ -15,9 +16,12 @@ export function renderPostsPageComponent({ appEl }, newLike) {
             return `
     <li class="post">
       <div class="post-header" data-user-id=${post.user.id}>
-        <img src=${post.user.imageUrl} class="post-header__user-image">
-        <p class="post-header__user-name">${sanitize(post.user.name)}</p>
-      </div>
+        <div class="post-header_container"
+          <img src=${post.user.imageUrl} class="post-header__user-image">
+          <p class="post-header__user-name">${sanitize(post.user.name)}</p>
+        </div>
+        <button class="del" data-post-id=${post.id}></button>
+        </div>
       <div class="post-image-container">
         <img class="post-image" src=${post.imageUrl}>
       </div>
@@ -98,6 +102,18 @@ export function renderPostsPageComponent({ appEl }, newLike) {
           userEl.className = 'like-button';
           setError(error.message, userEl);
         });
+    });
+  }
+
+  for (const btn of document.querySelectorAll('.del')) {
+    if (user?._id !== btn.closest('.post-header').dataset.userId)
+      btn.disabled = true;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      confirm('Вы точно хотите удалить пост?') &&
+        onDeletePostClick(btn.dataset.postId).then(
+          goToPage(POSTS_PAGE, user._id),
+        );
     });
   }
 }
