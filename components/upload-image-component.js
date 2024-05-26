@@ -1,7 +1,7 @@
-import { uploadImage } from "../api.js";
+import { uploadImage } from '../api.js';
 
 export function renderUploadImageComponent({ element, onImageUrlChange }) {
-  let imageUrl = "";
+  let imageUrl = '';
 
   const render = () => {
     element.innerHTML = `
@@ -9,7 +9,7 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
       ${
         imageUrl
           ? `
-          <div class="file-upload-image-conrainer">
+          <div class="file-upload-image-container">
             <img class="file-upload-image" src="${imageUrl}">
             <button class="file-upload-remove-button button">Заменить фото</button>
           </div>
@@ -29,14 +29,14 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
   </div>
 `;
 
-    const fileInputElement = element.querySelector(".file-upload-input");
+    const fileInputElement = element.querySelector('.file-upload-input');
 
-    fileInputElement?.addEventListener("change", () => {
+    fileInputElement?.addEventListener('change', () => {
       const file = fileInputElement.files[0];
       if (file) {
-        const lableEl = document.querySelector(".file-upload-label");
-        lableEl.setAttribute("disabled", true);
-        lableEl.textContent = "Загружаю файл...";
+        const labelEl = document.querySelector('.file-upload-label');
+        labelEl.setAttribute('disabled', true);
+        labelEl.textContent = 'Загружаю файл...';
         uploadImage({ file }).then(({ fileUrl }) => {
           imageUrl = fileUrl;
           onImageUrlChange(imageUrl);
@@ -46,9 +46,9 @@ export function renderUploadImageComponent({ element, onImageUrlChange }) {
     });
 
     element
-      .querySelector(".file-upload-remove-button")
-      ?.addEventListener("click", () => {
-        imageUrl = "";
+      .querySelector('.file-upload-remove-button')
+      ?.addEventListener('click', () => {
+        imageUrl = '';
         onImageUrlChange(imageUrl);
         render();
       });
